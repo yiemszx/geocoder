@@ -32,7 +32,7 @@ var modifyStructure = function(arrAddress, exportObj) {
 
   for(var i=0; i<arrAddress.length; i++){
     var json = arrAddress[i];
-    json.address = (json.address).replace(/"/g,"");
+    // json.address = (json.address).replace(/"/g,"");
     var keysAtIndex = Object.keys(json);
 
     var newObj =  { };

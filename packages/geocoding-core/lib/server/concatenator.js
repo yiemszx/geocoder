@@ -38,5 +38,5 @@ GdsGeocoding.Concatenator.concatAddress = function (csvPath, arrFields, seperato
     arrConcat.push(address);
   }
 
-  GdsGeocoding.Export.toCSV(arrConcat, csvPath.slice(0,-4) + " (concatenated).csv");
+  return arrConcat;
 }

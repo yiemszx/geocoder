@@ -53,23 +53,23 @@ var getAddressArrayFromCsvAsync = function (csvPath, lineLimit, cb) {
 }
 GdsGeocoding.Extractor.getAddressArrayFromCsv = Meteor.wrapAsync(getAddressArrayFromCsvAsync);
 
-GdsGeocoding.Extractor.extractCsv = function(csvPath, lineLimit) {
+GdsGeocoding.Extractor.extractCsv = function(csvPath, addressColName, lineLimit) {
   var limit = lineLimit || GdsGeocoding.Extractor.getCsvSize(csvPath);
   var arrAddress = GdsGeocoding.Extractor.getAddressArrayFromCsv(csvPath, limit);
   console.log("Total parsed address: ", arrAddress.length);
   // console.log("Parsed address: ", arrAddress);
 
   for(var i=0; i<arrAddress.length; i++){
-    var success = GdsGeocoding.Extractor.processAddress(arrAddress[i], arrAddress, i);
+    var success = GdsGeocoding.Extractor.processAddress(arrAddress[i], arrAddress, i, addressColName);
     console.log("Processing address #" + (i+1) + " out of " + arrAddress.length + ". Success?:", success);
   }
 
   return arrAddress;
 }
 
-GdsGeocoding.Extractor.processAddress = function(address, arrAddress, j) {
+GdsGeocoding.Extractor.processAddress = function(address, arrAddress, j, addressColName) {
   var arrKeys = Object.keys(address);
-  var addressIndex = arrKeys.indexOf("address");
+  var addressIndex = arrKeys.indexOf(addressColName);
   if(addressIndex >= 0) {
     var addr = address[arrKeys[addressIndex]].trim();
     addr = filterAddress(addr);
@@ -115,7 +115,8 @@ var geocodeAddress = function(addr, arrAddress, i) {
 }
 
 var filterAddress = function(addr) {
-  var addr = (addr).replace(/"/g,"");
+  // var addr = (addr).replace(/"/g,"");
+  // var addr = (addr).replace(" MALAYSIA","");
   var uniqueList=addr.split(',');
 
   for(var i=0; i<uniqueList.length; i++)
