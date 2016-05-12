@@ -3,8 +3,10 @@ GdsGeocoding.Concatenator = {};
 var concatFields = function (address, arrFields, seperator) {
   var str = "";
   for(var i=0; i<arrFields.length; i++){
-    if(address[arrFields[i]])
+    if(address[arrFields[i]] && address[arrFields[i]] !== "NULL"){
+      // console.log("address[arrFields[i]]:", address[arrFields[i]]);
       str += address[arrFields[i]] + seperator + " ";
+    }
   }
   return str.slice(0,-2).toUpperCase();
 }
