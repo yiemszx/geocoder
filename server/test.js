@@ -2,17 +2,19 @@
 
 // var filePath = '/home/isceapp2/Desktop/Copy of Sample Address & Phone';
 var filesystem = Npm.require("fs");
-var proceed = false;
+var proceed = true;
 var concat = false;
 
 var concatenated = concat ? " (concatenated)" : ""
-var addressColName = 'Address'
+var addressColName = 'Address_A'
+var arrAddressColName = [addressColName, 'Address_B']
 var extension = '.csv'
 // var concatStr = "Concatenated/(concatenated) "
 var concatStr = "/"
 var geocodeStr = "/Geocoded/(geocoded) "
-var arrAddressFields = ["fldfr_alamat1", "fldfr_alamat2", "fldfr_alamat3"]
-var dirPath = "/home/isceapp2/Desktop/Geocode Thingies/Scrapper/May"
+// var arrAddressFields = ["Unit Number", "ADDR_BLDG_NAME", "ADDR_STREET_TYPE", "ADDR_STREET_NAME", "ADDR_SECTION", "ADDR_POSTAL", "ADDR_CITY", "STATE"]
+var arrAddressFields = [["ADDR_LOT_APT_NO", "ADDR_BLDG_NAME", "ADDR_STREET_TYPE", "ADDR_STREET_NAME", "ADDR_SECTION", "ADDR_POSTAL", "ADDR_CITY", "STATE"], ["Unit Number", "BuildingName", "Street Type", "Street Name", "Section", "City", "State"]]
+var dirPath = "/home/isceapp2/Desktop/Geocode Thingies/TEC"
 
 // for(var i=0; i<arrFileName.length; i++){
 //   var arrConcat = GdsGeocoding.Concatenator.concatAddress(dirPath + arrFileName[i] + extension, arrAddressFields, ",", addressColName);
@@ -70,10 +72,10 @@ if(proceed){
     console.log("dir:", splitted[0]);
     console.log("file:", splitted[1]);
     if(concat){
-      var arrConcat = GdsGeocoding.Concatenator.concatAddress(splitted[0] + concatStr + splitted[1] + extension, arrAddressFields, ",", addressColName);
+      var arrConcat = GdsGeocoding.Concatenator.concatAddress(splitted[0] + concatStr + splitted[1] + extension, arrAddressFields[i], ",", addressColName);
       GdsGeocoding.Export.toCSV(arrConcat, splitted[0] + concatStr + splitted[1] + concatenated + extension);
     }
-    var arrAddress = GdsGeocoding.Extractor.extractCsv(splitted[0] + concatStr + splitted[1] + concatenated + extension, addressColName);
+    var arrAddress = GdsGeocoding.Extractor.extractCsv(splitted[0] + concatStr + splitted[1] + concatenated + extension, arrAddressColName);
     GdsGeocoding.Export.toCSV(arrAddress, splitted[0] + geocodeStr + splitted[1] + extension);
   }
 }

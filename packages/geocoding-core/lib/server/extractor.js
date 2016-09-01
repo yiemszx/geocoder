@@ -18,7 +18,7 @@ var getCsvSizeAsync = function (csvPath, cb) {
   });
 
   parser.on('error', function(err){
-    console.log(err.message);
+    console.log("parse error: ", err.message);
   });
 
   parser.on('finish', function(){
@@ -60,7 +60,9 @@ GdsGeocoding.Extractor.extractCsv = function(csvPath, addressColName, lineLimit)
   // console.log("Parsed address: ", arrAddress);
 
   for(var i=0; i<arrAddress.length; i++){
-    var success = GdsGeocoding.Extractor.processAddress(arrAddress[i], arrAddress, i, addressColName);
+    var success = GdsGeocoding.Extractor.processAddress(arrAddress[i], arrAddress, i, addressColName[0]);
+    if(!success && addressColName.length > 1 && arrAddress[i][addressColName[0]] !== arrAddress[i][addressColName[1]])
+      var success = GdsGeocoding.Extractor.processAddress(arrAddress[i], arrAddress, i, addressColName[1]);
     console.log("Processing address #" + (i+1) + " out of " + arrAddress.length + ". Success?:", success);
   }
 
