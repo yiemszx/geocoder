@@ -5,13 +5,14 @@ var concatFields = function (address, arrFields, seperator) {
   for(var i=0; i<arrFields.length; i++){
     if(address[arrFields[i]] && address[arrFields[i]] !== "-" && address[arrFields[i]].toUpperCase() !== "NULL" && address[arrFields[i]].toUpperCase() !== "NIL"){
       // console.log("address[arrFields[i]]:", address[arrFields[i]]);
-      if(arrFields[i] === "ADDR_STREET_TYPE" || arrFields[i] === "Street Type")
+      if(arrFields[i].toUpperCase() === "ADDR_STREET_TYPE" || arrFields[i].toUpperCase() === "STREET TYPE" ||  arrFields[i].toUpperCase() === "STREET_TYPE")
         str += address[arrFields[i]] + " ";
       else
         str += address[arrFields[i]] + seperator + " ";
     }
   }
-  return str.slice(0,-2).toUpperCase();
+  str = str.slice(0,-2).toUpperCase().replace(/MALAYSIA$/, "")
+  return str;
 }
 
 GdsGeocoding.Concatenator.getColumnName = function (csvPath) {

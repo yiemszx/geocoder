@@ -90,6 +90,11 @@ var geocodeAddress = function(addr, arrAddress, i) {
     if(bestAddress.dictionary){
       console.log("from dictionary");
       arrAddress[i].Output_Address = bestAddress.dictionary.formattedAddress;
+      arrAddress[i].Output_Apt = bestAddress.apt;
+      arrAddress[i].Output_Street = bestAddress.street;
+      arrAddress[i].Output_Section = bestAddress.dictionary.section;
+      arrAddress[i].Output_City = bestAddress.dictionary.city;
+      arrAddress[i].Output_State = bestAddress.state;
       arrAddress[i].Latitude = bestAddress.dictionary.latitude;
       arrAddress[i].Longitude = bestAddress.dictionary.longitude;
       arrAddress[i].isAccurate = bestAddress.accurate;
@@ -98,6 +103,11 @@ var geocodeAddress = function(addr, arrAddress, i) {
     else {
       console.log("from listing");
       arrAddress[i].Output_Address = bestAddress.formattedAddress;
+      arrAddress[i].Output_Apt = bestAddress.apt;
+      arrAddress[i].Output_Street = bestAddress.street;
+      arrAddress[i].Output_Section = bestAddress.section;
+      arrAddress[i].Output_City = bestAddress.city;
+      arrAddress[i].Output_State = bestAddress.state;
       arrAddress[i].Latitude = bestAddress.latitude;
       arrAddress[i].Longitude = bestAddress.longitude;
       arrAddress[i].isAccurate = bestAddress.accurate;
@@ -108,6 +118,11 @@ var geocodeAddress = function(addr, arrAddress, i) {
   else{
     console.log("failed");
     arrAddress[i].Output_Address = "";
+    arrAddress[i].Output_Apt = "";
+    arrAddress[i].Output_Street = "";
+    arrAddress[i].Output_Section = "";
+    arrAddress[i].Output_City = "";
+    arrAddress[i].Output_State = "";
     arrAddress[i].Latitude = "";
     arrAddress[i].Longitude = "";
     arrAddress[i].isAccurate = "";
@@ -116,6 +131,38 @@ var geocodeAddress = function(addr, arrAddress, i) {
   }
 }
 
+GdsGeocoding.Extractor.tokenizeAddress = function(csvPath, addressColName, prefix, lineLimit) {
+  var limit = lineLimit || GdsGeocoding.Extractor.getCsvSize(csvPath);
+  var arrAddress = GdsGeocoding.Extractor.getAddressArrayFromCsv(csvPath, limit);
+  var arrAddressColName = addressColName.split(',')
+  console.log("Total parsed address: ", arrAddress.length);
+  // console.log("Parsed address: ", arrAddress);
+
+  for(var i=0; i<arrAddress.length; i++){
+    var address = arrAddress[i];
+    var arrKeys = Object.keys(address);
+
+    arrAddressColName.forEach(function(addressColName){
+      var addressIndex = arrKeys.indexOf(addressColName);
+
+      if(addressIndex >= 0){
+        var addr = address[arrKeys[addressIndex]].trim();
+
+        var tokenized = Remote.call("tokenize", addr);
+        arrAddress[i][prefix + addressColName + "_Name"] = tokenized.name;
+        arrAddress[i][prefix + addressColName + "_No"] = tokenized.apt;
+        arrAddress[i][prefix + addressColName + "_Street"] = tokenized.street;
+        arrAddress[i][prefix + addressColName + "_Postcode"] = tokenized.postcode;
+        arrAddress[i][prefix + addressColName + "_Section"] = tokenized.section;
+        arrAddress[i][prefix + addressColName + "_City"] = tokenized.city;
+        arrAddress[i][prefix + addressColName + "_State"] = tokenized.state;
+
+        // console.log(arrAddress[i]);
+      }
+    })
+  }
+  return arrAddress
+}
 var filterAddress = function(addr) {
   // var addr = (addr).replace(/"/g,"");
   // var addr = (addr).replace(" MALAYSIA","");
