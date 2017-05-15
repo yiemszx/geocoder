@@ -3,6 +3,14 @@ GdsGeocoding.Extractor = {};
 var csvparse = Npm.require('csv-parse');
 var fs = Npm.require("fs");
 
+
+/**
+*function to calculate & retrieve number of records in csv file
+*
+*@param {string} csvPath path to directory that contains csv file(s)
+*@param {callback} cb callback for asynchronous function
+*@return {integer} number of in csv file
+*/
 var getCsvSizeAsync = function (csvPath, cb) {
   var input = fs.createReadStream(csvPath);
   var parser = csvparse({
@@ -25,8 +33,17 @@ var getCsvSizeAsync = function (csvPath, cb) {
     cb(null, parser.count);
   });
 }
+//function to wrap asynchronous function
 GdsGeocoding.Extractor.getCsvSize = Meteor.wrapAsync(getCsvSizeAsync);
 
+/**
+*function to fetch all records in csv file
+*
+*@param {string} csvPath path to directory that contains csv file(s)
+*@param {integer} lineLimit max number of records to be fetched
+*@param {callback} cb callback for asynchronous function
+*@return {array} of object of total records in csv file
+*/
 var getAddressArrayFromCsvAsync = function (csvPath, lineLimit, cb) {
   var input = fs.createReadStream(csvPath);
   var output = [];
@@ -51,8 +68,17 @@ var getAddressArrayFromCsvAsync = function (csvPath, lineLimit, cb) {
     cb(null, output);
   });
 }
+//function to wrap asynchronous function
 GdsGeocoding.Extractor.getAddressArrayFromCsv = Meteor.wrapAsync(getAddressArrayFromCsvAsync);
 
+/**
+*function to extract all records and assign to process
+*
+*@param {string} csvPath path to directory that contains csv file(s)
+*@param {string} addressColName name of the address column in the csv file
+*@param {integer} lineLimit max number of records to be fetched
+*@return {array} of object of total records in csv file that has been processed
+*/
 GdsGeocoding.Extractor.extractCsv = function(csvPath, addressColName, lineLimit) {
   var limit = lineLimit || GdsGeocoding.Extractor.getCsvSize(csvPath);
   var arrAddress = GdsGeocoding.Extractor.getAddressArrayFromCsv(csvPath, limit);
@@ -69,6 +95,56 @@ GdsGeocoding.Extractor.extractCsv = function(csvPath, addressColName, lineLimit)
   return arrAddress;
 }
 
+/**
+*function to geocode address
+*
+*@param {string} addr address to geocode
+*@param {array} arrAddress contains all the addresses fetched from csv file
+*@param {integer} i index of the address
+*@return {boolean} whether address is successfully geocoded or not
+*/
+var geocodeAddress = function(addr, arrAddress, i) {
+  var arrResult = Remote.call("performSearch", addr);
+
+  var bestAddress = Remote.call("getBestAddress", addr, arrResult);
+
+  if(bestAddress === null){
+      console.log("failed");
+      arrAddress[i].Output_Address = "";
+      arrAddress[i].Latitude = "";
+      arrAddress[i].Longitude = "";
+      arrAddress[i].isAccurate = "";
+      arrAddress[i].Accuracy_Level = "";
+      return false;
+  }
+  if(bestAddress.dictionary){
+    console.log("from dictionary");
+    arrAddress[i].Output_Address = bestAddress.dictionary.formattedAddress;
+    arrAddress[i].Latitude = bestAddress.dictionary.latitude;
+    arrAddress[i].Longitude = bestAddress.dictionary.longitude;
+    arrAddress[i].isAccurate = bestAddress.accurate;
+    arrAddress[i].Accuracy_Level = bestAddress.level;
+  }
+  else {
+    console.log("from listing");
+    arrAddress[i].Output_Address = bestAddress.formattedAddress;
+    arrAddress[i].Latitude = bestAddress.latitude;
+    arrAddress[i].Longitude = bestAddress.longitude;
+    arrAddress[i].isAccurate = bestAddress.accurate;
+    arrAddress[i].Accuracy_Level = bestAddress.level;
+  }
+  return true;
+}
+
+/**
+*function to process each address
+*
+*@param {string} address address to geocode
+*@param {array} arrAddress contains all the addresses fetched from csv file
+*@param {integer} j index of the address
+*@param {string} addressColName name of the address column in the csv file
+*@return {boolean} whether address is successfully geocoded or not
+*/
 GdsGeocoding.Extractor.processAddress = function(address, arrAddress, j, addressColName) {
   var arrKeys = Object.keys(address);
   var addressIndex = arrKeys.indexOf(addressColName);
@@ -82,49 +158,19 @@ GdsGeocoding.Extractor.processAddress = function(address, arrAddress, j, address
   return false;
 }
 
-var geocodeAddress = function(addr, arrAddress, i) {
-  var arrResult = Remote.call("performSearch", addr);
-
-  var bestAddress = Remote.call("getBestAddress", addr, arrResult);
-  if(bestAddress !== null){
-    if(bestAddress.dictionary){
-      console.log("from dictionary");
-      arrAddress[i].Output_Address = bestAddress.dictionary.formattedAddress;
-      arrAddress[i].Latitude = bestAddress.dictionary.latitude;
-      arrAddress[i].Longitude = bestAddress.dictionary.longitude;
-      arrAddress[i].isAccurate = bestAddress.accurate;
-      arrAddress[i].Accuracy_Level = bestAddress.level;
-    }
-    else {
-      console.log("from listing");
-      arrAddress[i].Output_Address = bestAddress.formattedAddress;
-      arrAddress[i].Latitude = bestAddress.latitude;
-      arrAddress[i].Longitude = bestAddress.longitude;
-      arrAddress[i].isAccurate = bestAddress.accurate;
-      arrAddress[i].Accuracy_Level = bestAddress.level;
-    }
-    return true;
-  }
-  else{
-    console.log("failed");
-    arrAddress[i].Output_Address = "";
-    arrAddress[i].Latitude = "";
-    arrAddress[i].Longitude = "";
-    arrAddress[i].isAccurate = "";
-    arrAddress[i].Accuracy_Level = "";
-    return false;
-  }
-}
-
+/**
+*function to filter address (e.g. trim, eliminates duplication)
+*
+*@param {string} address to be filtered
+*@return {string} of filtered address
+*/
 var filterAddress = function(addr) {
-  // var addr = (addr).replace(/"/g,"");
-  // var addr = (addr).replace(" MALAYSIA","");
-  var uniqueList=addr.split(',');
+  var uniqueList = addr.split(',');
 
   for(var i=0; i<uniqueList.length; i++)
     uniqueList[i] = uniqueList[i].trim();
 
-  return uniqueList.filter(function(item,i,allItems){
-    return i==allItems.indexOf(item);
+  return uniqueList.filter(function(item,i,arrUnique){
+    return i==arrUnique.indexOf(item);
   }).join(',');
 }

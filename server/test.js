@@ -3,18 +3,18 @@
 // var filePath = '/home/isceapp2/Desktop/Copy of Sample Address & Phone';
 var filesystem = Npm.require("fs");
 var proceed = true;
-var concat = false;
+var concat = true;
 
 var concatenated = concat ? " (concatenated)" : ""
-var addressColName = 'Address_A'
-var arrAddressColName = [addressColName, 'Address_B']
+var addressColName = 'Address'
+var arrAddressColName = [addressColName]
 var extension = '.csv'
 // var concatStr = "Concatenated/(concatenated) "
 var concatStr = "/"
 var geocodeStr = "/Geocoded/(geocoded) "
 // var arrAddressFields = ["Unit Number", "ADDR_BLDG_NAME", "ADDR_STREET_TYPE", "ADDR_STREET_NAME", "ADDR_SECTION", "ADDR_POSTAL", "ADDR_CITY", "STATE"]
-var arrAddressFields = [["ADDR_LOT_APT_NO", "ADDR_BLDG_NAME", "ADDR_STREET_TYPE", "ADDR_STREET_NAME", "ADDR_SECTION", "ADDR_POSTAL", "ADDR_CITY", "STATE"], ["Unit Number", "BuildingName", "Street Type", "Street Name", "Section", "City", "State"]]
-var dirPath = "/home/isceapp2/Desktop/Geocode Thingies/TEC"
+var arrAddressFields = [["ALAMAT", "SKIM", "MUKIM", "NEGERI"]]
+var dirPath = "D:/Work/Geocode Thingies/Napic"
 
 // for(var i=0; i<arrFileName.length; i++){
 //   var arrConcat = GdsGeocoding.Concatenator.concatAddress(dirPath + arrFileName[i] + extension, arrAddressFields, ",", addressColName);
