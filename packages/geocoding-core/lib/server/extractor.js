@@ -70,6 +70,7 @@ GdsGeocoding.Extractor.extractCsv = function(csvPath, addressColName, lineLimit)
 }
 
 GdsGeocoding.Extractor.processAddress = function(address, arrAddress, j, addressColName) {
+  // console.log(address)
   var arrKeys = Object.keys(address);
   var addressIndex = arrKeys.indexOf(addressColName);
   if(addressIndex >= 0) {
@@ -164,7 +165,10 @@ GdsGeocoding.Extractor.tokenizeAddress = function(csvPath, addressColName, prefi
   return arrAddress
 }
 var filterAddress = function(addr) {
-  // var addr = (addr).replace(/"/g,"");
+  // console.log("before:", addr)
+  // addr = (addr).replace(/[\\]+"+/g,"");
+  // console.log("after:", addr)
+    // var addr = (addr).replace(/"/g,"");
   // var addr = (addr).replace(" MALAYSIA","");
   var uniqueList=addr.split(',');
 

@@ -1,12 +1,12 @@
 var filesystem = Npm.require("fs");
 var extension = '.csv'
 var addressColName = 'ADDRESS'
-var dirPath = "/home/isce-map-dev1/Documents/Geocode Thingies/Dura/20170509/SB Central"
+var dirPath = "D:/Work/Geocode Thingies/Anida/Second"
 
 var startGeocode = function(addressColName,dirPath) {
 
   var proceed = true;
-  var concat = true;
+  var concat = false;
 
   var concatenated = concat ? " (concatenated)" : ""
   addressColName = addressColName || 'Address'
@@ -16,17 +16,16 @@ var startGeocode = function(addressColName,dirPath) {
   var concatStr = "/"
   var geocodeStr = "/Geocoded/(geocoded) "
   var arrAddressFields = [
-    ["BUILDING_NAME", "FLOOR_NUMBER", "HOUSE_UNIT_LOT", "STREET_TYPE", "STREET_NAME", "SECTION", "POSTCODE", "CITY", "STATE"]
+    // ["BUILDING_NAME", "FLOOR_NUMBER", "HOUSE_UNIT_LOT", "STREET_TYPE", "STREET_NAME", "SECTION", "POSTCODE", "CITY", "STATE"]
     // ["BUILDING_NAME", "FLR_LVL", "HSE_NUM", "STREET_TYPE", "STREET_NAME", "SECTION_NAME", "POSTAL_CODE", "CITY_NAME", "STATE"]
     // ["ADDR_BLDG_NAME", "ADDR_FLOOR_LEVEL", "ADDR_LOT_APT_NO", "ADDR_STREET_TYPE", "ADDR_STREET_NAME", "ADDR_SECTION", "ADDR_POSTAL", "ADDR_CITY", "STATE"],
     // ["BuildingName", "Floor", "Unit Number", "Street Type", "Street Name", "Section", "City", "State"]
   ]
-  for(var i=0; i<44; i++){
-    arrAddressFields.push(arrAddressFields[0])
-  }
+  // for(var i=0; i<44; i++){
+  //   arrAddressFields.push(arrAddressFields[0])
+  // }
   // var arrAddressFields = [["HOUSE_UNIT_LOT", "BUILDING_NAME", "STREET_TYPE", "STREET_NAME", "SECTION", "POSTCODE", "CITY", "STATE"]]
   // var arrAddressFields = [["HSE_NUM", "FLR_LVL", "BUILDING_NAME", "STREET_TYPE", "STREET_NAME", "SECTION_NAME", "POSTAL_CODE", "CITY_NAME", "STATE_CODE"]]
-  dirPath = dirPath
 
 
   if(proceed){
@@ -115,6 +114,6 @@ var splitDirFile = function(dirFile){
   return [arrSplit.slice(0, arrSplit.length - 1).join("/"), arrSplit[arrSplit.length - 1].substring(0, arrSplit[arrSplit.length - 1].length - 4)]
 }
 console.time("Elapsed time: ");
-startGeocode('ADDRESS',dirPath)
+startGeocode('FULL_ADDRESS',dirPath)
 // startTokenize(dirPath, 'RISK_ADDRESS', 'tokenized_')
 console.timeEnd("Elapsed time: ");
