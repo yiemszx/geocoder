@@ -84,24 +84,69 @@ GdsGeocoding.Extractor.processAddress = function(address, arrAddress, j, address
 }
 
 var geocodeAddress = function(addr, arrAddress, i) {
-  var arrResult = Remote.call("performSearch", addr);
+  var tokenized = Remote.call("tokenize", addr);
+  var arrResult = Remote.call("performSearch", tokenized);
 
-  var bestAddress = Remote.call("getBestAddress", addr, arrResult);
+  var bestAddress = Remote.call("getBestAddress", tokenized, arrResult);
+
+  // street = tokenized.street
+  // if(street){
+  //   street = street.replace("JALAN", "")
+  //   street = street.replace(/ /g,"")
+  //   split = street.match(/[a-zA-Z/]+|[0-9/]+/g)
+  //   count = split.length
+  //
+  //   if(bestAddress.level === "section"){
+  //     console.log("street1:", street)
+  //     tokenized.street = street
+  //     arrResult = Remote.call("performSearch", tokenized);
+  //     bestAddress = Remote.call("getBestAddress", tokenized, arrResult);
+  //   }
+  //
+  //   if(bestAddress.level === "section"){
+  //     if(count >= 2){
+  //       street = split[0] + split[1] + " "
+  //       for(j=2; j< count; j++){
+  //         street = street + split[j]
+  //       }
+  //     }
+  //     console.log("street2:", street)
+  //     tokenized.street = street
+  //     arrResult = Remote.call("performSearch", tokenized);
+  //     bestAddress = Remote.call("getBestAddress", tokenized, arrResult);
+  //   }
+  //
+  //   if(bestAddress.level === "section"){
+  //     if(count >= 3){
+  //       street = split[0] + split[1] + split[2] + " "
+  //       for(j=3; j< count; j++){
+  //         street = street + split[j]
+  //       }
+  //     }
+  //     console.log("street3:", street)
+  //     tokenized.street = street
+  //     arrResult = Remote.call("performSearch", tokenized);
+  //     bestAddress = Remote.call("getBestAddress", tokenized, arrResult);
+  //   }
+  // }
+
+
   if(bestAddress !== null){
-    if(bestAddress.dictionary){
-      console.log("from dictionary");
-      arrAddress[i].Output_Address = bestAddress.dictionary.formattedAddress;
-      arrAddress[i].Output_Apt = bestAddress.apt;
-      arrAddress[i].Output_Street = bestAddress.street;
-      arrAddress[i].Output_Section = bestAddress.dictionary.section;
-      arrAddress[i].Output_City = bestAddress.dictionary.city;
-      arrAddress[i].Output_State = bestAddress.state;
-      arrAddress[i].Latitude = bestAddress.dictionary.latitude;
-      arrAddress[i].Longitude = bestAddress.dictionary.longitude;
-      arrAddress[i].isAccurate = bestAddress.accurate;
-      arrAddress[i].Accuracy_Level = bestAddress.level;
-    }
-    else {
+    // if(bestAddress.dictionary){
+    //   console.log("from dictionary");
+    //   arrAddress[i].Output_Address = bestAddress.dictionary.formattedAddress;
+    //   arrAddress[i].Output_Apt = bestAddress.apt;
+    //   arrAddress[i].Output_Street = bestAddress.street;
+    //   arrAddress[i].Output_Section = bestAddress.dictionary.section;
+    //   arrAddress[i].Output_City = bestAddress.dictionary.city;
+    //   arrAddress[i].Output_State = bestAddress.state;
+    //   arrAddress[i].Latitude = bestAddress.dictionary.latitude;
+    //   arrAddress[i].Longitude = bestAddress.dictionary.longitude;
+    //   arrAddress[i].isAccurate = bestAddress.accurate;
+    //   arrAddress[i].Accuracy_Level = bestAddress.level;
+    //   arrAddress[i].Accuracy = bestAddress.accuracy;
+    // }
+    // else {
       console.log("from listing");
       arrAddress[i].Output_Address = bestAddress.formattedAddress;
       arrAddress[i].Output_Apt = bestAddress.apt;
@@ -113,7 +158,8 @@ var geocodeAddress = function(addr, arrAddress, i) {
       arrAddress[i].Longitude = bestAddress.longitude;
       arrAddress[i].isAccurate = bestAddress.accurate;
       arrAddress[i].Accuracy_Level = bestAddress.level;
-    }
+      arrAddress[i].Accuracy = bestAddress.accuracy;
+    // }
     return true;
   }
   else{
@@ -128,6 +174,7 @@ var geocodeAddress = function(addr, arrAddress, i) {
     arrAddress[i].Longitude = "";
     arrAddress[i].isAccurate = "";
     arrAddress[i].Accuracy_Level = "";
+    arrAddress[i].Accuracy = "";
     return false;
   }
 }

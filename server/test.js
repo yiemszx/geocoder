@@ -1,7 +1,6 @@
 var filesystem = Npm.require("fs");
 var extension = '.csv'
-var addressColName = 'ADDRESS'
-var dirPath = "D:/Work/Geocode Thingies/Anida/Second"
+var dirPath = "/home/isceweb2/Documents/Geocode Thingies/Shirlin/NEO_North"
 
 var startGeocode = function(addressColName,dirPath) {
 
@@ -17,11 +16,12 @@ var startGeocode = function(addressColName,dirPath) {
   var geocodeStr = "/Geocoded/(geocoded) "
   var arrAddressFields = [
     // ["BUILDING_NAME", "FLOOR_NUMBER", "HOUSE_UNIT_LOT", "STREET_TYPE", "STREET_NAME", "SECTION", "POSTCODE", "CITY", "STATE"]
-    // ["BUILDING_NAME", "FLR_LVL", "HSE_NUM", "STREET_TYPE", "STREET_NAME", "SECTION_NAME", "POSTAL_CODE", "CITY_NAME", "STATE"]
+    // ["BUILDING_NAME", "LOT_NUM", "STREET_TYPE", "STREET_NAME", "SECTION_NAME", "POSTAL_CODE", "CITY_NAME", "STATE_NAME"]
     // ["ADDR_BLDG_NAME", "ADDR_FLOOR_LEVEL", "ADDR_LOT_APT_NO", "ADDR_STREET_TYPE", "ADDR_STREET_NAME", "ADDR_SECTION", "ADDR_POSTAL", "ADDR_CITY", "STATE"],
     // ["BuildingName", "Floor", "Unit Number", "Street Type", "Street Name", "Section", "City", "State"]
+    ["ADDRESS_1", "ADDRESS_2", "ADDRESS_3", "POST_CODE", "CUST_CITY"]
   ]
-  // for(var i=0; i<44; i++){
+  // for(var i=0; i<9; i++){
   //   arrAddressFields.push(arrAddressFields[0])
   // }
   // var arrAddressFields = [["HOUSE_UNIT_LOT", "BUILDING_NAME", "STREET_TYPE", "STREET_NAME", "SECTION", "POSTCODE", "CITY", "STATE"]]
@@ -114,6 +114,6 @@ var splitDirFile = function(dirFile){
   return [arrSplit.slice(0, arrSplit.length - 1).join("/"), arrSplit[arrSplit.length - 1].substring(0, arrSplit[arrSplit.length - 1].length - 4)]
 }
 console.time("Elapsed time: ");
-startGeocode('FULL_ADDRESS',dirPath)
-// startTokenize(dirPath, 'RISK_ADDRESS', 'tokenized_')
+startGeocode('Address',dirPath)
+// startTokenize(dirPath, 'Address', 'tokenized_')
 console.timeEnd("Elapsed time: ");

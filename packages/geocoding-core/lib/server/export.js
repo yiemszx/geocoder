@@ -46,7 +46,7 @@ var modifyStructure = function(arrAddress, exportObj) {
     var newObj =  { };
     // console.log("keysAtIndex:", keysAtIndex);
     for(var j=0; j<keysAtIndex.length; j++){
-      newObj[keysAtIndex[j]] = typeof (json[keysAtIndex[j]]) === "string" ? '"' + json[keysAtIndex[j]].replace(/[\\]+"+/g, "") + '"' : '"' + json[keysAtIndex[j]] + '"'
+      newObj[keysAtIndex[j]] = typeof (json[keysAtIndex[j]]) === "string" ? '"' + json[keysAtIndex[j]].replace(/[\\]*"+/g, "") + '"' : '"' + json[keysAtIndex[j]] + '"'
     }
     // console.log("newObj", newObj)
     // addressUpdateDelivery(json._id, deliveryID);
