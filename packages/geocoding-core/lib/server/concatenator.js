@@ -5,7 +5,7 @@ var concatFields = function (address, arrFields, seperator) {
   for(var i=0; i<arrFields.length; i++){
     if(address[arrFields[i]] && address[arrFields[i]] !== "-" && address[arrFields[i]].toUpperCase() !== "NULL" && address[arrFields[i]].toUpperCase() !== "NIL"){
       // console.log("address[arrFields[i]]:", address[arrFields[i]]);
-      if(arrFields[i].toUpperCase() === "ADDR_STREET_TYPE" || arrFields[i].toUpperCase() === "STREET TYPE" ||  arrFields[i].toUpperCase() === "STREET_TYPE")
+      if(arrFields[i].toUpperCase().indexOf('STREET_TYPE') !== -1 || arrFields[i].toUpperCase().indexOf('STREET TYPE') !== -1)
         str += address[arrFields[i]] + " ";
       else
         str += address[arrFields[i]] + seperator + " ";
