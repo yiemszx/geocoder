@@ -1,7 +1,7 @@
 const filesystem = Npm.require('fs');
 const extension = '.csv';
 // const dirPath = 'D:/Work/Geocode Thingies/Anida/Webe 1710 171120';
-const dirPath = 'D:/Work/Geocode Thingies/Anida/Webe 1801 180130';
+const dirPath = 'D:/Work/Geocode Thingies/Anida/Webe 1803 180308/test';
 const addressColName = 'ADDRESS';
 const proceed = true;
 const concat = true;
@@ -61,8 +61,8 @@ const startGeocode = () => {
     // ["BUILDING_NAME", "LOT_NUM", "STREET_TYPE", "STREET_NAME", "SECTION_NAME", "POSTAL_CODE", "CITY_NAME", "STATE_NAME"]
     // ["ADDR_BLDG_NAME", "ADDR_FLOOR_LEVEL", "ADDR_LOT_APT_NO", "ADDR_STREET_TYPE", "ADDR_STREET_NAME", "ADDR_SECTION", "ADDR_POSTAL", "ADDR_CITY", "STATE"],
     // ["BuildingName", "Floor", "Unit Number", "Street Type", "Street Name", "Section", "City", "State"]
-    ['ADDRESS_1', 'ADDRESS_2', 'ADDRESS_3', 'POST_CODE', 'CUST_CITY'],
-    ['ADDRESS_1', 'ADDRESS_2', 'ADDRESS_3', 'POST_CODE', 'CUST_CITY'],
+    ['ADDRESS_1', 'ADDRESS_2', 'ADDRESS_3', 'POST_CODE', 'CUST_CITY', 'CUST_STATE'],
+    // ['ADDRESS_1', 'ADDRESS_2', 'ADDRESS_3', 'POST_CODE', 'CUST_CITY'],
     // ['TI_CUST_UNIT_NUM', 'TI_CUST_BUILDING_NAME', 'TI_CUST_STREET_TYPE', 'TI_CUST_STREET_NAME', 'TI_CUST_SECTION', 'TI_CUST_POSTAL_CODE', 'TI_CUST_CITY', 'TI_CUST_STATE']
     // ['ADDR_LOT_APT_NO', 'ADDR_BLDG_NAME', 'ADDR_STREET_TYPE', 'ADDR_STREET_NAME', 'ADDR_SECTION', 'ADDR_POSTAL', 'ADDR_CITY', 'STATE'],
   ];
@@ -88,12 +88,24 @@ const startGeocode = () => {
       let outputTarget = '';
       if (concat) {
         outputTarget = splitted[0] + concatStr + splitted[1] + extension;
+        console.log('outputTarget:', outputTarget);
         const arrConcat = GdsGeocoding.Concatenator.concatAddress(outputTarget, arrAddressFields[i], ',', addressColName);
-        GdsGeocoding.Export.toCSV(arrConcat, splitted[0] + concatStr + splitted[1] + concatenated + extension);
+        outputTarget = splitted[0] + concatStr + splitted[1] + concatenated + extension;
+        console.log('concatinated outputTarget:', outputTarget);
+        GdsGeocoding.Export.toCSV(arrConcat, outputTarget);
+
+        while (!filesystem.existsSync(outputTarget)) {
+          console.log('Waiting for the concatenated file...');
+          Npm.require('deasync').sleep(500);
+        }
       }
+      /*
+      for (let time = 3; time >= 1; time -= 1) {
+        console.log('Resuming in: ', time);
+        Npm.require('deasync').sleep(1000);
+      }
+      */
       // if(i>0) arrAddressColName = ["newaddress"]
-      outputTarget = splitted[0] + concatStr + splitted[1] + concatenated + extension;
-      console.log('outputTarget:', outputTarget);
       const arrAddress = GdsGeocoding.Extractor.extractCsv(outputTarget, arrAddressColName);
       GdsGeocoding.Export.toCSV(arrAddress, splitted[0] + geocodeStr + splitted[1] + extension);
     }
